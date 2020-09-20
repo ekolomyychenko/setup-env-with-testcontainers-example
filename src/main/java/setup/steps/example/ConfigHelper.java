@@ -1,4 +1,4 @@
-package test.steps.example;
+package setup.steps.example;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;

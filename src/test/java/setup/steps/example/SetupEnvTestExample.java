@@ -1,4 +1,4 @@
-package test.steps.example;
+package setup.steps.example;
 
 import org.junit.After;
 import org.junit.Before;

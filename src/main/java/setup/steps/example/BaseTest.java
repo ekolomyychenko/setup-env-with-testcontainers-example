@@ -1,4 +1,4 @@
-package test.steps.example;
+package setup.steps.example;
 
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
