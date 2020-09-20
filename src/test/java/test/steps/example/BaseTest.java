@@ -3,6 +3,7 @@ package test.steps.example;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.Network;
 
 import java.io.IOException;
 import java.util.List;
@@ -10,25 +11,19 @@ import java.util.List;
 @Log4j2
 public class BaseTest {
 
-    private TestContainersHelpers testContainersHelpers = new TestContainersHelpers();
+    private TestContainersHelper testContainersHelpers = new TestContainersHelper();
 
+    private static Network network = Network.newNetwork();
 
     protected GenericContainer createGenericContainer(@NonNull String service) throws InterruptedException, IOException {
 
         String image = testContainersHelpers.getImage(service);
 
         GenericContainer genericContainer = new GenericContainer(image)
-                .withNetwork(Session.getNetwork())
-                .withNetworkAliases(service);
+                .withLabel("image-name", service)
+                .withNetwork(network);
 
-        genericContainer = testContainersHelpers.setPorts(genericContainer, service);
-        genericContainer = testContainersHelpers.setJavaOps(genericContainer, service);
-        genericContainer = testContainersHelpers.setResourceMapping(genericContainer, service);
-        genericContainer = testContainersHelpers.setEnvVars(genericContainer);
-        genericContainer = testContainersHelpers.setNetworkAlias(genericContainer, service);
-        genericContainer = testContainersHelpers.setWithCommand(genericContainer, service);
-
-        Session.addContainer(genericContainer);
+        genericContainer = testContainersHelpers.setConfig(genericContainer);
 
         return genericContainer;
     }
@@ -47,6 +42,7 @@ public class BaseTest {
     }
 
     private Boolean shouldEnableLogging(@NonNull GenericContainer genericContainer){
-        return ConfigHelper.getConfig().getBoolean(genericContainer.getNetworkAliases().get(1) + ".logging-enabled");
+        log.info(genericContainer.getLabels());
+        return ConfigHelper.getConfig().getBoolean(genericContainer.getLabels().get("image-name") + ".logging-enabled");
     }
 }

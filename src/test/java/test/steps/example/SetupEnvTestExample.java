@@ -1,40 +1,36 @@
 package test.steps.example;
 
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.Network;
-import org.testcontainers.utility.MountableFile;
 
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.URL;
-import java.nio.file.FileSystem;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Enumeration;
 
 public class SetupEnvTestExample extends BaseTest {
 
+    GenericContainer mongo = createGenericContainer("mongo");
+    GenericContainer consul = createGenericContainer("consul");
+    GenericContainer authorization = createGenericContainer("reportportal/service-authorization");
+    GenericContainer traefik = createGenericContainer("traefik");
+    GenericContainer index = createGenericContainer("reportportal/service-index");
+    GenericContainer api = createGenericContainer("reportportal/service-api");
+    GenericContainer ui = createGenericContainer("reportportal/service-ui");
+    GenericContainer analyzer = createGenericContainer("reportportal/service-analyzer");
+    GenericContainer elasticsearch = createGenericContainer("docker.elastic.co/elasticsearch/elasticsearch-oss");
+    GenericContainer jira = createGenericContainer("reportportal/service-jira");
+    GenericContainer rally = createGenericContainer("reportportal/service-rally");
+
+    public SetupEnvTestExample() throws IOException, InterruptedException {
+    }
+
+    @Before
+    public void before() throws InterruptedException {
+
+    }
 
     @Test
-    public void setup_env_test() throws IOException, InterruptedException {
-        GenericContainer mongo = createGenericContainer("mongo");
-        GenericContainer consul = createGenericContainer("consul");
-        GenericContainer authorization = createGenericContainer("reportportal/service-authorization");
-        GenericContainer traefik = createGenericContainer("traefik");
-        GenericContainer index = createGenericContainer("reportportal/service-index");
-        GenericContainer api = createGenericContainer("reportportal/service-api");
-        GenericContainer ui = createGenericContainer("reportportal/service-ui");
-        GenericContainer analyzer = createGenericContainer("reportportal/service-analyzer");
-        GenericContainer elasticsearch = createGenericContainer("docker.elastic.co/elasticsearch/elasticsearch-oss");
-        GenericContainer jira = createGenericContainer("reportportal/service-jira");
-        GenericContainer rally = createGenericContainer("reportportal/service-rally");
-
-
+    public void setup_env_test() throws InterruptedException {
         setup(mongo);
         setup(consul);
         setup(authorization);
@@ -47,9 +43,7 @@ public class SetupEnvTestExample extends BaseTest {
         setup(jira);
         setup(rally);
 
-
-        Thread.sleep(15_000);
-
+        Thread.sleep(30_000);
         System.out.println(ui.getMappedPort(8080));
     }
 
