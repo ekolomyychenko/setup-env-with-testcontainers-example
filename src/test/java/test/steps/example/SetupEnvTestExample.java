@@ -25,25 +25,22 @@ public class SetupEnvTestExample extends BaseTest {
     }
 
     @Before
-    public void before() throws InterruptedException {
-
-    }
-
-    @Test
-    public void setup_env_test() throws InterruptedException {
+    public void before() {
         setup(mongo);
         setup(consul);
         setup(authorization);
         setup(traefik);
         setup(index);
         setup(api);
-        setup(ui);
         setup(analyzer);
         setup(elasticsearch);
         setup(jira);
         setup(rally);
+        setup(ui);
+    }
 
-        Thread.sleep(30_000);
+    @Test
+    public void setup_env_test() {
         System.out.println(ui.getMappedPort(8080));
     }
 
