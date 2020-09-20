@@ -43,7 +43,7 @@ public class ContainerHelper {
         });
     }
 
-    public static Boolean shouldEnableLogging(@NonNull GenericContainer genericContainer){
+    public static Boolean shouldEnableLogging(@NonNull GenericContainer genericContainer) {
         log.info(genericContainer.getLabels());
         return ConfigHelper.getConfig().getBoolean(genericContainer.getLabels().get("image-name") + ".logging-enabled");
     }
@@ -68,7 +68,6 @@ public class ContainerHelper {
 
 
     private static void setPorts(@NonNull GenericContainer genericContainer) {
-
         ArrayList<Integer> ports = new ArrayList<>();
 
         try {
@@ -89,32 +88,26 @@ public class ContainerHelper {
                 genericContainer.setExposedPorts(ports);
             }
         }
-
     }
 
 
     private static void setJavaOps(@NonNull GenericContainer genericContainer) {
-
         try {
             genericContainer.withEnv("JAVA_OPTS", ConfigHelper.getConfig().getString(getImageName(genericContainer) + ".java-ops"));
         } catch (ConfigException.Missing e) {
             log.info(e);
         }
-
     }
 
     private static void setWithCommand(@NonNull GenericContainer genericContainer) {
-
         try {
             genericContainer.withCommand(ConfigHelper.getConfig().getString(getImageName(genericContainer) + ".command"));
         } catch (ConfigException.Missing e) {
             log.info(e);
         }
-
     }
 
     private static void setResourceMapping(@NonNull GenericContainer genericContainer) {
-
         try {
             genericContainer.withClasspathResourceMapping(
                     ConfigHelper.getConfig().getString(getImageName(genericContainer) + ".resource-mapping-resource-path"),
@@ -123,16 +116,13 @@ public class ContainerHelper {
         } catch (ConfigException.Missing e) {
             log.info(e);
         }
-
     }
 
     private static void setEnvVars(@NonNull GenericContainer genericContainer) throws IOException {
-
         Map<String, String> env = ConfigHelper.getEnvVars();
-
         for (Map.Entry<String, String> pair : env.entrySet()) {
             genericContainer.withEnv(pair.getKey(), pair.getValue());
         }
-
     }
+
 }
