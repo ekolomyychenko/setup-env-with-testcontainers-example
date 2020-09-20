@@ -48,6 +48,7 @@ public class ContainerHelper {
         return ConfigHelper.getConfig().getBoolean(genericContainer.getLabels().get("image-name") + ".logging-enabled");
     }
 
+
     private static String getImageName(@NonNull GenericContainer genericContainer) {
         return genericContainer.getLabels().get("image-name").toString();
     }
@@ -69,19 +70,16 @@ public class ContainerHelper {
 
     private static void setPorts(@NonNull GenericContainer genericContainer) {
         ArrayList<Integer> ports = new ArrayList<>();
-
         try {
             ports.add(ConfigHelper.getConfig().getInt(getImageName(genericContainer) + ".grpc-port"));
         } catch (ConfigException.Missing e) {
             log.info(e);
         }
-
         try {
             ports.add(ConfigHelper.getConfig().getInt(getImageName(genericContainer) + ".http-port"));
         } catch (ConfigException.Missing e) {
             log.info(e);
         }
-
         if (ports.size() != 0) {
             for (int port : ports) {
                 log.info("Exposed ports for " + getImageName(genericContainer) + " " + port);
