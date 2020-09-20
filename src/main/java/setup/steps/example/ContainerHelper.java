@@ -9,29 +9,27 @@ import org.testcontainers.containers.output.OutputFrame;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Consumer;
 
 @Log4j2
-public class TestContainersHelper {
+public class ContainerHelper {
 
-    public String getImage(@NonNull String service) throws InterruptedException {
-        String image = service + ":" + ConfigHelper.getConfig().getString(service + ".version");
-        return image;
+    public static String getImage(@NonNull String service) throws InterruptedException {
+        return service + ":" + ConfigHelper.getConfig().getString(service + ".version");
     }
 
-    public GenericContainer setConfig(@NonNull GenericContainer genericContainer) throws IOException {
-        genericContainer = setPorts(genericContainer);
-        genericContainer = setJavaOps(genericContainer);
-        genericContainer = setResourceMapping(genericContainer);
-        genericContainer = setEnvVars(genericContainer);
-        genericContainer = setNetworkAlias(genericContainer);
-        genericContainer = setWithCommand(genericContainer);
+    public static GenericContainer setConfig(@NonNull GenericContainer genericContainer) throws IOException {
+        setPorts(genericContainer);
+        setJavaOps(genericContainer);
+        setResourceMapping(genericContainer);
+        setEnvVars(genericContainer);
+        setNetworkAlias(genericContainer);
+        setWithCommand(genericContainer);
         return genericContainer;
     }
 
-    public void logging(@NonNull GenericContainer genericContainer) {
+    public static void logging(@NonNull GenericContainer genericContainer) {
         genericContainer.followOutput(new Consumer<OutputFrame>() {
             @Override
             public void accept(OutputFrame outputFrame) {
@@ -45,35 +43,45 @@ public class TestContainersHelper {
         });
     }
 
-    private String getImageName(@NonNull GenericContainer genericContainer){
+    public static Boolean shouldEnableLogging(@NonNull GenericContainer genericContainer){
+        log.info(genericContainer.getLabels());
+        return ConfigHelper.getConfig().getBoolean(genericContainer.getLabels().get("image-name") + ".logging-enabled");
+    }
+
+    private static String getImageName(@NonNull GenericContainer genericContainer) {
         return genericContainer.getLabels().get("image-name").toString();
     }
 
-    private GenericContainer setNetworkAlias(@NonNull GenericContainer genericContainer) {
+    private static void setNetworkAlias(@NonNull GenericContainer genericContainer) {
         String networkAliases = getImageName(genericContainer);
         String networkAliasesFromConf = null;
         try {
             networkAliasesFromConf = ConfigHelper.getConfig().getString(getImageName(genericContainer) + ".network-alias");
-        } catch (ConfigException.Missing e) { log.info(e); }
+        } catch (ConfigException.Missing e) {
+            log.info(e);
+        }
         if (networkAliasesFromConf != null) {
             networkAliases = networkAliasesFromConf;
         }
         genericContainer.withNetworkAliases(networkAliases);
-        return genericContainer;
     }
 
 
-    private GenericContainer setPorts(@NonNull GenericContainer genericContainer) {
+    private static void setPorts(@NonNull GenericContainer genericContainer) {
 
         ArrayList<Integer> ports = new ArrayList<>();
 
         try {
             ports.add(ConfigHelper.getConfig().getInt(getImageName(genericContainer) + ".grpc-port"));
-        } catch (ConfigException.Missing e) { log.info(e); }
+        } catch (ConfigException.Missing e) {
+            log.info(e);
+        }
 
         try {
             ports.add(ConfigHelper.getConfig().getInt(getImageName(genericContainer) + ".http-port"));
-        } catch (ConfigException.Missing e) { log.info(e); }
+        } catch (ConfigException.Missing e) {
+            log.info(e);
+        }
 
         if (ports.size() != 0) {
             for (int port : ports) {
@@ -82,51 +90,49 @@ public class TestContainersHelper {
             }
         }
 
-        return genericContainer;
     }
 
 
-    private GenericContainer setJavaOps(@NonNull GenericContainer genericContainer) {
+    private static void setJavaOps(@NonNull GenericContainer genericContainer) {
 
         try {
             genericContainer.withEnv("JAVA_OPTS", ConfigHelper.getConfig().getString(getImageName(genericContainer) + ".java-ops"));
-        } catch (ConfigException.Missing e) { log.info(e); }
+        } catch (ConfigException.Missing e) {
+            log.info(e);
+        }
 
-        return genericContainer;
     }
 
-    private GenericContainer setWithCommand(@NonNull GenericContainer genericContainer) {
+    private static void setWithCommand(@NonNull GenericContainer genericContainer) {
 
         try {
             genericContainer.withCommand(ConfigHelper.getConfig().getString(getImageName(genericContainer) + ".command"));
-        } catch (ConfigException.Missing e) { log.info(e); }
+        } catch (ConfigException.Missing e) {
+            log.info(e);
+        }
 
-        return genericContainer;
     }
 
-    private GenericContainer setResourceMapping(@NonNull GenericContainer genericContainer) {
+    private static void setResourceMapping(@NonNull GenericContainer genericContainer) {
 
         try {
             genericContainer.withClasspathResourceMapping(
                     ConfigHelper.getConfig().getString(getImageName(genericContainer) + ".resource-mapping-resource-path"),
                     ConfigHelper.getConfig().getString(getImageName(genericContainer) + ".resource-mapping-container-path"),
                     BindMode.READ_WRITE);
-        } catch (ConfigException.Missing e) { log.info(e); }
+        } catch (ConfigException.Missing e) {
+            log.info(e);
+        }
 
-        return genericContainer;
     }
 
-    private GenericContainer setEnvVars(@NonNull GenericContainer genericContainer) throws IOException {
+    private static void setEnvVars(@NonNull GenericContainer genericContainer) throws IOException {
 
         Map<String, String> env = ConfigHelper.getEnvVars();
 
-        Iterator<Map.Entry<String, String>> iterator = env.entrySet().iterator();
-
-        while (iterator.hasNext()) {
-            Map.Entry<String, String> pair = iterator.next();
+        for (Map.Entry<String, String> pair : env.entrySet()) {
             genericContainer.withEnv(pair.getKey(), pair.getValue());
         }
 
-        return genericContainer;
     }
 }

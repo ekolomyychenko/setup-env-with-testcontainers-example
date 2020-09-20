@@ -13,7 +13,7 @@ import java.util.Properties;
 @Log4j2
 public class ConfigHelper {
 
-    private static Config config = ConfigFactory.load();
+    private static final Config config = ConfigFactory.load();
 
     public static Config getConfig() {
         return config;

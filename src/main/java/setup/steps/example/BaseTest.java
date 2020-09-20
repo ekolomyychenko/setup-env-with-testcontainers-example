@@ -11,7 +11,7 @@ import java.util.List;
 @Log4j2
 public class BaseTest {
 
-    private TestContainersHelper testContainersHelpers = new TestContainersHelper();
+    private ContainerHelper testContainersHelpers = new ContainerHelper();
 
     private static Network network = Network.newNetwork();
 
@@ -36,13 +36,9 @@ public class BaseTest {
         for (int port : ports) {
             log.info("Setup: " + genericContainer.getDockerImageName() + " with port: " + port + " -> " + genericContainer.getMappedPort(port));
         }
-        if (shouldEnableLogging(genericContainer)) {
+        if (ContainerHelper.shouldEnableLogging(genericContainer)) {
             testContainersHelpers.logging(genericContainer);
         }
     }
 
-    private Boolean shouldEnableLogging(@NonNull GenericContainer genericContainer){
-        log.info(genericContainer.getLabels());
-        return ConfigHelper.getConfig().getBoolean(genericContainer.getLabels().get("image-name") + ".logging-enabled");
-    }
 }
