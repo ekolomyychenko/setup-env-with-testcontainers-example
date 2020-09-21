@@ -31,12 +31,12 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
     protected void configure() {
         withLabel("image-name", serviceName);
         withNetwork(network);
-        setPorts();
-        setJavaOps();
-        setResourceMapping();
-        setEnvVars();
-        setNetworkAlias();
-        setWithCommand();
+        setupPorts();
+        setupJavaOps();
+        setupResourceMapping();
+        setupEnvVars();
+        setupNetworkAlias();
+        setupWithCommand();
     }
 
     public static String getImage(@NonNull String service) {
@@ -63,7 +63,7 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
         return ConfigHelper.getConfig().getBoolean(genericContainer.getLabels().get("image-name") + ".logging-enabled");
     }
 
-    private void setNetworkAlias() {
+    private void setupNetworkAlias() {
         String networkAliases = serviceName;
         String networkAliasesFromConf = null;
         try {
@@ -78,7 +78,7 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
     }
 
 
-    private void setPorts() {
+    private void setupPorts() {
         ArrayList<Integer> ports = new ArrayList<>();
         try {
             ports.add(ConfigHelper.getConfig().getInt(serviceName + ".grpc-port"));
@@ -99,7 +99,7 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
     }
 
 
-    private void setJavaOps() {
+    private void setupJavaOps() {
         try {
             withEnv("JAVA_OPTS", ConfigHelper.getConfig().getString(serviceName + ".java-ops"));
         } catch (ConfigException.Missing e) {
@@ -107,7 +107,7 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
         }
     }
 
-    private void setWithCommand() {
+    private void setupWithCommand() {
         try {
             withCommand(ConfigHelper.getConfig().getString(serviceName + ".command"));
         } catch (ConfigException.Missing e) {
@@ -115,7 +115,7 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
         }
     }
 
-    private void setResourceMapping() {
+    private void setupResourceMapping() {
         try {
             withClasspathResourceMapping(
                     ConfigHelper.getConfig().getString(serviceName + ".resource-mapping-resource-path"),
@@ -126,7 +126,7 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
         }
     }
 
-    private void setEnvVars() throws IOException {
+    private void setupEnvVars() throws IOException {
         Map<String, String> env = ConfigHelper.getEnvVars();
         for (Map.Entry<String, String> pair : env.entrySet()) {
             withEnv(pair.getKey(), pair.getValue());
