@@ -3,25 +3,22 @@ package setup.steps.example;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.testcontainers.containers.GenericContainer;
-
-import java.io.IOException;
 
 public class SetupEnvTestExample extends BaseTest {
 
-    GenericContainer mongo = createGenericContainer("mongo");
-    GenericContainer consul = createGenericContainer("consul");
-    GenericContainer authorization = createGenericContainer("reportportal/service-authorization");
-    GenericContainer traefik = createGenericContainer("traefik");
-    GenericContainer index = createGenericContainer("reportportal/service-index");
-    GenericContainer api = createGenericContainer("reportportal/service-api");
-    GenericContainer ui = createGenericContainer("reportportal/service-ui");
-    GenericContainer analyzer = createGenericContainer("reportportal/service-analyzer");
-    GenericContainer elasticsearch = createGenericContainer("docker.elastic.co/elasticsearch/elasticsearch-oss");
-    GenericContainer jira = createGenericContainer("reportportal/service-jira");
-    GenericContainer rally = createGenericContainer("reportportal/service-rally");
+    Service mongo = createGenericContainer("mongo");
+    Service consul = createGenericContainer("consul");
+    Service authorization = createGenericContainer("reportportal/service-authorization");
+    Service traefik = createGenericContainer("traefik");
+    Service index = createGenericContainer("reportportal/service-index");
+    Service api = createGenericContainer("reportportal/service-api");
+    Service ui = createGenericContainer("reportportal/service-ui");
+    Service analyzer = createGenericContainer("reportportal/service-analyzer");
+    Service elasticsearch = createGenericContainer("docker.elastic.co/elasticsearch/elasticsearch-oss");
+    Service jira = createGenericContainer("reportportal/service-jira");
+    Service rally = createGenericContainer("reportportal/service-rally");
 
-    public SetupEnvTestExample() throws IOException, InterruptedException {
+    public SetupEnvTestExample() {
     }
 
     @Before
@@ -40,8 +37,10 @@ public class SetupEnvTestExample extends BaseTest {
     }
 
     @Test
-    public void setup_env_test() {
+    public void setup_env_test() throws InterruptedException {
         System.out.println(ui.getMappedPort(8080));
+        Thread.sleep(60_000);
+
     }
 
     @After
