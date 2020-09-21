@@ -15,13 +15,13 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 @Log4j2
-public class Service extends GenericContainer<Service> {
+public class ServiceContainer extends GenericContainer<ServiceContainer> {
 
     private static final Network network = Network.newNetwork();
     private String serviceName;
 
     @SneakyThrows
-    public Service(@NonNull String serviceName) {
+    public ServiceContainer(@NonNull String serviceName) {
         super(getImage(serviceName));
         this.serviceName = serviceName.replaceAll("\"", "");
     }
@@ -44,7 +44,7 @@ public class Service extends GenericContainer<Service> {
         return service + ":" + ConfigHelper.getConfig().getString(service + ".version");
     }
 
-    public static void logging(@NonNull Service genericContainer) {
+    public static void logging(@NonNull ServiceContainer genericContainer) {
         genericContainer.followOutput(new Consumer<OutputFrame>() {
             @Override
             public void accept(OutputFrame outputFrame) {
@@ -58,7 +58,7 @@ public class Service extends GenericContainer<Service> {
         });
     }
 
-    public static Boolean shouldEnableLogging(Service genericContainer) {
+    public static Boolean shouldEnableLogging(ServiceContainer genericContainer) {
         log.info(genericContainer.getLabels());
         return ConfigHelper.getConfig().getBoolean(genericContainer.getLabels().get("image-name") + ".logging-enabled");
     }

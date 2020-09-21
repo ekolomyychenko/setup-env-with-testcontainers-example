@@ -6,17 +6,17 @@ import org.junit.Test;
 
 public class SetupEnvTestExample extends BaseTest {
 
-    Service mongo = createGenericContainer("mongo");
-    Service consul = createGenericContainer("consul");
-    Service authorization = createGenericContainer("reportportal/service-authorization");
-    Service traefik = createGenericContainer("traefik");
-    Service index = createGenericContainer("reportportal/service-index");
-    Service api = createGenericContainer("reportportal/service-api");
-    Service ui = createGenericContainer("reportportal/service-ui");
-    Service analyzer = createGenericContainer("reportportal/service-analyzer");
-    Service elasticsearch = createGenericContainer("docker.elastic.co/elasticsearch/elasticsearch-oss");
-    Service jira = createGenericContainer("reportportal/service-jira");
-    Service rally = createGenericContainer("reportportal/service-rally");
+    ServiceContainer mongo = createGenericContainer("mongo");
+    ServiceContainer consul = createGenericContainer("consul");
+    ServiceContainer authorization = createGenericContainer("reportportal/service-authorization");
+    ServiceContainer traefik = createGenericContainer("traefik");
+    ServiceContainer index = createGenericContainer("reportportal/service-index");
+    ServiceContainer api = createGenericContainer("reportportal/service-api");
+    ServiceContainer ui = createGenericContainer("reportportal/service-ui");
+    ServiceContainer analyzer = createGenericContainer("reportportal/service-analyzer");
+    ServiceContainer elasticsearch = createGenericContainer("docker.elastic.co/elasticsearch/elasticsearch-oss");
+    ServiceContainer jira = createGenericContainer("reportportal/service-jira");
+    ServiceContainer rally = createGenericContainer("reportportal/service-rally");
 
     public SetupEnvTestExample() {
     }

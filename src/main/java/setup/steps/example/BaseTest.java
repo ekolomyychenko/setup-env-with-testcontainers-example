@@ -8,11 +8,11 @@ import java.util.List;
 @Log4j2
 public class BaseTest {
 
-    protected Service createGenericContainer(@NonNull String service) {
-        return new Service(service);
+    protected ServiceContainer createGenericContainer(@NonNull String service) {
+        return new ServiceContainer(service);
     }
 
-    protected void setup(@NonNull Service genericContainer) {
+    protected void setup(@NonNull ServiceContainer genericContainer) {
         genericContainer.start();
 
         log.info("Setup: " + genericContainer.getDockerImageName());
@@ -20,8 +20,8 @@ public class BaseTest {
         for (int port : ports) {
             log.info("Setup: " + genericContainer.getDockerImageName() + " with port: " + port + " -> " + genericContainer.getMappedPort(port));
         }
-        if (Service.shouldEnableLogging(genericContainer)) {
-            Service.logging(genericContainer);
+        if (ServiceContainer.shouldEnableLogging(genericContainer)) {
+            ServiceContainer.logging(genericContainer);
         }
     }
 
