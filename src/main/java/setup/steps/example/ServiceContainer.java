@@ -30,6 +30,7 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
     @Override
     protected void configure() {
         withLabel("image-name", serviceName);
+        withLabel("logging-enabled", shouldEnableLogging(serviceName).toString());
         withNetwork(network);
         setupPorts();
         setupJavaOps();
@@ -44,13 +45,13 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
         return service + ":" + ConfigHelper.getConfig().getString(service + ".version");
     }
 
-    public static void logging(@NonNull ServiceContainer genericContainer) {
-        genericContainer.followOutput(new Consumer<OutputFrame>() {
+    public static void logging(@NonNull ServiceContainer container) {
+        container.followOutput(new Consumer<OutputFrame>() {
             @Override
             public void accept(OutputFrame outputFrame) {
                 System.out.println(String.format(
                         "%s: %s",
-                        genericContainer
+                        container
                                 .getDockerImageName(),
                         outputFrame.getUtf8String()
                 ));
@@ -58,9 +59,8 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
         });
     }
 
-    public static Boolean shouldEnableLogging(ServiceContainer genericContainer) {
-        log.info(genericContainer.getLabels());
-        return ConfigHelper.getConfig().getBoolean(genericContainer.getLabels().get("image-name") + ".logging-enabled");
+    public Boolean shouldEnableLogging(String serviceName) {
+        return ConfigHelper.getConfig().getBoolean(serviceName + ".logging-enabled");
     }
 
     private void setupNetworkAlias() {
@@ -69,7 +69,7 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
         try {
             networkAliasesFromConf = ConfigHelper.getConfig().getString(serviceName + ".network-alias");
         } catch (ConfigException.Missing e) {
-            log.info(e);
+            log.warn(e);
         }
         if (networkAliasesFromConf != null) {
             networkAliases = networkAliasesFromConf;
@@ -83,12 +83,12 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
         try {
             ports.add(ConfigHelper.getConfig().getInt(serviceName + ".grpc-port"));
         } catch (ConfigException.Missing e) {
-            log.info(e);
+            log.warn(e);
         }
         try {
             ports.add(ConfigHelper.getConfig().getInt(serviceName + ".http-port"));
         } catch (ConfigException.Missing e) {
-            log.info(e);
+            log.warn(e);
         }
         if (ports.size() != 0) {
             for (int port : ports) {
@@ -103,7 +103,7 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
         try {
             withEnv("JAVA_OPTS", ConfigHelper.getConfig().getString(serviceName + ".java-ops"));
         } catch (ConfigException.Missing e) {
-            log.info(e);
+            log.warn(e);
         }
     }
 
@@ -111,7 +111,7 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
         try {
             withCommand(ConfigHelper.getConfig().getString(serviceName + ".command"));
         } catch (ConfigException.Missing e) {
-            log.info(e);
+            log.warn(e);
         }
     }
 
@@ -122,7 +122,7 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
                     ConfigHelper.getConfig().getString(serviceName + ".resource-mapping-container-path"),
                     BindMode.READ_WRITE);
         } catch (ConfigException.Missing e) {
-            log.info(e);
+            log.warn(e);
         }
     }
 

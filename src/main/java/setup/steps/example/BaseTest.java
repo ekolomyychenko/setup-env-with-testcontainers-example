@@ -12,16 +12,16 @@ public class BaseTest {
         return new ServiceContainer(service);
     }
 
-    protected void setup(@NonNull ServiceContainer genericContainer) {
-        genericContainer.start();
+    protected void setup(@NonNull ServiceContainer container) {
+        container.start();
 
-        log.info("Setup: " + genericContainer.getDockerImageName());
-        List<Integer> ports = genericContainer.getExposedPorts();
+        log.info("Setup: " + container.getDockerImageName());
+        List<Integer> ports = container.getExposedPorts();
         for (int port : ports) {
-            log.info("Setup: " + genericContainer.getDockerImageName() + " with port: " + port + " -> " + genericContainer.getMappedPort(port));
+            log.info("Setup: " + container.getDockerImageName() + " with port: " + port + " -> " + container.getMappedPort(port));
         }
-        if (ServiceContainer.shouldEnableLogging(genericContainer)) {
-            ServiceContainer.logging(genericContainer);
+        if (Boolean.parseBoolean(container.getLabels().get("logging-enabled"))) {
+            ServiceContainer.logging(container);
         }
     }
 
