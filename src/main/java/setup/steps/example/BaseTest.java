@@ -8,7 +8,7 @@ import java.util.List;
 @Log4j2
 public class BaseTest {
 
-    protected ServiceContainer createGenericContainer(@NonNull String service) {
+    protected ServiceContainer createServiceContainer(@NonNull String service) {
         return new ServiceContainer(service);
     }
 

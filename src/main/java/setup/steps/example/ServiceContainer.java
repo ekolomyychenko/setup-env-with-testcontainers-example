@@ -23,7 +23,7 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
     @SneakyThrows
     public ServiceContainer(@NonNull String serviceName) {
         super(getImage(serviceName));
-        this.serviceName = serviceName.replaceAll("\"", "");
+        this.serviceName = serviceName;
     }
 
     @SneakyThrows
