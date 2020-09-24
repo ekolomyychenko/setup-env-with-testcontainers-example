@@ -1,8 +1,8 @@
 package setup.steps.example;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class SetupEnvTestExample extends BaseTest {
 
@@ -21,7 +21,7 @@ public class SetupEnvTestExample extends BaseTest {
     public SetupEnvTestExample() {
     }
 
-    @Before
+    @BeforeEach
     public void before() {
         setup(mongo);
         setup(consul);
@@ -40,13 +40,10 @@ public class SetupEnvTestExample extends BaseTest {
     public void setup_env_test() throws InterruptedException {
         System.out.println(ui.getMappedPort(8080));
         Thread.sleep(120_000);
-
     }
 
-    @After
+    @AfterEach
     public void after() throws InterruptedException {
         Thread.sleep(60_000);
     }
-
-
 }
