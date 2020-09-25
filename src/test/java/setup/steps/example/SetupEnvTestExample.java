@@ -1,8 +1,9 @@
 package setup.steps.example;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static io.restassured.RestAssured.given;
 
 public class SetupEnvTestExample extends BaseTest {
 
@@ -38,12 +39,11 @@ public class SetupEnvTestExample extends BaseTest {
 
     @Test
     public void setup_env_test() throws InterruptedException {
-        System.out.println(ui.getMappedPort(8080));
-        Thread.sleep(120_000);
-    }
-
-    @AfterEach
-    public void after() throws InterruptedException {
-        Thread.sleep(60_000);
+        given()
+                .baseUri("http://localhost:" + ui.getMappedPort(8080))
+                .when()
+                .post()
+                .then()
+                .statusCode(200);
     }
 }

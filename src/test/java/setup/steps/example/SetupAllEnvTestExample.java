@@ -1,19 +1,20 @@
 package setup.steps.example;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import static io.restassured.RestAssured.given;
 
-public class SetupAllEnvTestExample extends BaseTest {
+
+public class SetupAllEnvTestExample extends SetupAllEnvBaseTest {
 
     @Test
     public void setup_env_test() throws InterruptedException {
-        Thread.sleep(120_000);
-
-    }
-
-    @AfterEach
-    public void after() throws InterruptedException {
-        Thread.sleep(60_000);
+        System.out.println(services);
+        given()
+                .baseUri("http://localhost:" + services.get("reportportal/service-ui").getMappedPort(8080))
+                .when()
+                .post()
+                .then()
+                .statusCode(200);
     }
 }

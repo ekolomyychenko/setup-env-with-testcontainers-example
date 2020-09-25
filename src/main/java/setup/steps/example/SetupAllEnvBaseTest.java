@@ -4,25 +4,28 @@ import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.BeforeAll;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static setup.steps.example.ConfigHelper.getConfig;
 
 @Log4j2
 public class SetupAllEnvBaseTest {
 
+    public static final Map<String, ServiceContainer> services = new HashMap<>();
+
     @BeforeAll
-    public void beforeAll(){
-        // достать все сервисы из апликейшена
-        // положить например в мапу Map<String, Object> <название сервиса, null>
-        // пройтись по мапе и для кадого значения вызвать createServiceContainer, контейнеры можно тоже сохранить в мапе <название сервиса, ServiceContainer>
-        // протись по мапе достать велью и кинуть в setup(@NonNull ServiceContainer container)
-        // если че-то не стартанулось, то где-то через 30 сек все упадет, docker ps -a
+    static void beforeAll() {
+        for (String service : getConfig().getStringList("services")) {
+            services.put(service, new ServiceContainer(service));
+        }
+        for (Map.Entry<String, ServiceContainer> entry : services.entrySet()) {
+            setup(entry.getValue());
+        }
     }
 
-    protected ServiceContainer createServiceContainer(@NonNull String service) {
-        return new ServiceContainer(service);
-    }
-
-    protected void setup(@NonNull ServiceContainer container) {
+    private static void setup(@NonNull ServiceContainer container) {
         container.start();
 
         log.info("Setup: " + container.getDockerImageName());

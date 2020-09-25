@@ -42,7 +42,7 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
 
     public static String getImage(@NonNull String service) {
         log.info("Service name: " + service);
-        return service + ":" + ConfigHelper.getConfig().getString("services." + service + ".version");
+        return service + ":" + ConfigHelper.getConfig().getString(service + ".version");
     }
 
     public static void logging(@NonNull ServiceContainer container) {
@@ -60,14 +60,14 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
     }
 
     public Boolean shouldEnableLogging(String serviceName) {
-        return ConfigHelper.getConfig().getBoolean("services." + serviceName + ".logging-enabled");
+        return ConfigHelper.getConfig().getBoolean(serviceName + ".logging-enabled");
     }
 
     private void setupNetworkAlias() {
         String networkAliases = serviceName;
         String networkAliasesFromConf = null;
         try {
-            networkAliasesFromConf = ConfigHelper.getConfig().getString("services." + serviceName + ".network-alias");
+            networkAliasesFromConf = ConfigHelper.getConfig().getString(serviceName + ".network-alias");
         } catch (ConfigException.Missing e) {
             log.warn(e);
         }
@@ -81,12 +81,12 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
     private void setupPorts() {
         ArrayList<Integer> ports = new ArrayList<>();
         try {
-            ports.add(ConfigHelper.getConfig().getInt("services." + serviceName + ".grpc-port"));
+            ports.add(ConfigHelper.getConfig().getInt(serviceName + ".grpc-port"));
         } catch (ConfigException.Missing e) {
             log.warn(e);
         }
         try {
-            ports.add(ConfigHelper.getConfig().getInt("services." + serviceName + ".http-port"));
+            ports.add(ConfigHelper.getConfig().getInt(serviceName + ".http-port"));
         } catch (ConfigException.Missing e) {
             log.warn(e);
         }
@@ -101,7 +101,7 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
 
     private void setupJavaOps() {
         try {
-            withEnv("JAVA_OPTS", ConfigHelper.getConfig().getString("services." + serviceName + ".java-ops"));
+            withEnv("JAVA_OPTS", ConfigHelper.getConfig().getString(serviceName + ".java-ops"));
         } catch (ConfigException.Missing e) {
             log.warn(e);
         }
@@ -109,7 +109,7 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
 
     private void setupWithCommand() {
         try {
-            withCommand(ConfigHelper.getConfig().getString("services." + serviceName + ".command"));
+            withCommand(ConfigHelper.getConfig().getString(serviceName + ".command"));
         } catch (ConfigException.Missing e) {
             log.warn(e);
         }
@@ -118,8 +118,8 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
     private void setupResourceMapping() {
         try {
             withClasspathResourceMapping(
-                    ConfigHelper.getConfig().getString("services." + serviceName + ".resource-mapping-resource-path"),
-                    ConfigHelper.getConfig().getString("services." + serviceName + ".resource-mapping-container-path"),
+                    ConfigHelper.getConfig().getString(serviceName + ".resource-mapping-resource-path"),
+                    ConfigHelper.getConfig().getString(serviceName + ".resource-mapping-container-path"),
                     BindMode.READ_WRITE);
         } catch (ConfigException.Missing e) {
             log.warn(e);
@@ -132,5 +132,4 @@ public class ServiceContainer extends GenericContainer<ServiceContainer> {
             withEnv(pair.getKey(), pair.getValue());
         }
     }
-
 }
