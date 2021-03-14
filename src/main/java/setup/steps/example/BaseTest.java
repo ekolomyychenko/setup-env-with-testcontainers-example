@@ -8,21 +8,17 @@ import java.util.List;
 @Log4j2
 public class BaseTest {
 
-    protected ServiceContainer createServiceContainer(@NonNull String service) {
-        return new ServiceContainer(service);
-    }
+	protected ServiceContainer createServiceContainer(@NonNull String service) {
+		return new ServiceContainer(service);
+	}
 
-    protected void setup(@NonNull ServiceContainer container) {
-        container.start();
-
-        log.info("Setup: " + container.getDockerImageName());
-        List<Integer> ports = container.getExposedPorts();
-        for (int port : ports) {
-            log.info("Setup: " + container.getDockerImageName() + " with port: " + port + " -> " + container.getMappedPort(port));
-        }
-        if (Boolean.parseBoolean(container.getLabels().get("logging-enabled"))) {
-            ServiceContainer.logging(container);
-        }
-    }
+	protected void setup(@NonNull ServiceContainer container) {
+		container.start();
+		container.getExposedPorts().forEach(port -> log.info(String.format("Setup: %s with port: %s -> %s",
+						container.getDockerImageName(), port, container.getMappedPort(port))));
+		if (Boolean.parseBoolean(container.getLabels().get("logging-enabled"))) {
+			ServiceContainer.logging(container);
+		}
+	}
 
 }

@@ -13,7 +13,7 @@
         <maven.compiler.source>12</maven.compiler.source>
         <junit.jupiter.version>5.6.0</junit.jupiter.version>
         <junit.platform.version>1.6.0</junit.platform.version>
-        <testcontainers.version>1.12.2</testcontainers.version>
+        <testcontainers.version>1.15.2</testcontainers.version>
     </properties>
 
 

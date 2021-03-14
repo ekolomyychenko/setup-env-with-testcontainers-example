@@ -13,24 +13,21 @@ import java.util.Properties;
 @Log4j2
 public class ConfigHelper {
 
-    private static final Config config = ConfigFactory.load();
+	private static final Config config = ConfigFactory.load();
 
-    public static Config getConfig() {
-        return config;
-    }
+	public static Config getConfig() {
+		return config;
+	}
 
-    /*
-     * Переменные окружения для микросервисов
-     * */
-    public static Map<String, String> getEnvVars() throws IOException {
-        Map<String, String> envVars = new HashMap<>();
-        Properties properties = new Properties();
-        properties.load(new FileInputStream("src/test/resources/services-env.properties"));
-
-        for (String key : properties.stringPropertyNames()) {
-            envVars.put(key, properties.get(key).toString());
-        }
-
-        return envVars;
-    }
+	/*
+	 * Переменные окружения для микросервисов
+	 * */
+	public static Map<String, String> getEnvVars() throws IOException {
+		Map<String, String> envVars = new HashMap<>();
+		Properties properties = new Properties();
+		properties.load(new FileInputStream("src/test/resources/services-env.properties"));
+		properties.stringPropertyNames().forEach(key ->
+				envVars.put(key, properties.get(key).toString()));
+		return envVars;
+	}
 }

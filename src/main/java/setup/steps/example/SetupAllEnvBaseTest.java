@@ -13,29 +13,24 @@ import static setup.steps.example.ConfigHelper.getConfig;
 @Log4j2
 public class SetupAllEnvBaseTest {
 
-    public static final Map<String, ServiceContainer> services = new HashMap<>();
+	public static final Map<String, ServiceContainer> services = new HashMap<>();
 
-    @BeforeAll
-    static void beforeAll() {
-        for (String service : getConfig().getStringList("services")) {
-            services.put(service, new ServiceContainer(service));
-        }
-        for (Map.Entry<String, ServiceContainer> entry : services.entrySet()) {
-            setup(entry.getValue());
-        }
-    }
+	@BeforeAll
+	static void beforeAll() {
+		getConfig().getStringList("services").forEach(service ->
+				services.put(service, new ServiceContainer(service)));
+		services.values().forEach(SetupAllEnvBaseTest::setup);
+	}
 
-    private static void setup(@NonNull ServiceContainer container) {
-        container.start();
+	private static void setup(@NonNull ServiceContainer container) {
+		container.start();
 
-        log.info("Setup: " + container.getDockerImageName());
-        List<Integer> ports = container.getExposedPorts();
-        for (int port : ports) {
-            log.info("Setup: " + container.getDockerImageName() + " with port: " + port + " -> " + container.getMappedPort(port));
-        }
-        if (Boolean.parseBoolean(container.getLabels().get("logging-enabled"))) {
-            ServiceContainer.logging(container);
-        }
-    }
+		log.info("Setup: " + container.getDockerImageName());
+		container.getExposedPorts().forEach(port -> log.info(String.format("Setup: %s with port: %s -> %s",
+				container.getDockerImageName(), port, container.getMappedPort(port))));
+		if (Boolean.parseBoolean(container.getLabels().get("logging-enabled"))) {
+			ServiceContainer.logging(container);
+		}
+	}
 
 }
